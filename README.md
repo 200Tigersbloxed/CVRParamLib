@@ -7,12 +7,14 @@ A Library for interacting with ChilloutVR's Animator Parameters
 - [X] BepInEx Support
 - [X] ParameterSDK
   + Interaction with CVR Animator Parameters via. a Mod/Plugin
-- [X] OSC
-  - [X] `/avatar/parameter` Address
-  - [ ] `/input` Address
 - [ ] Config
   - [ ] Enable OSC
   - [ ] OSC Port
+- [X] OSC
+  - [X] `/avatar/parameter` Address
+  - [ ] `/settings/cvrpl/` Address
+    + Ability to change config via. OSC
+  - [ ] `/input` Address
 
 ## Installing
 
