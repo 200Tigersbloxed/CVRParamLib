@@ -12,7 +12,7 @@ A Library for interacting with ChilloutVR's Animator Parameters
   - [ ] OSC Port
 - [X] OSC
   - [X] `/avatar/parameter` Address
-  - [ ] `/settings/cvrpl/` Address
+  - [ ] `/settings/cvrpl` Address
     + Ability to change config via. OSC
   - [ ] `/input` Address
 
