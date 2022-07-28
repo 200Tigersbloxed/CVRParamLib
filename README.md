@@ -10,6 +10,9 @@ A Library for interacting with ChilloutVR's Animator Parameters
 - [X] OSC
   - [X] `/avatar/parameter` Address
   - [ ] `/input` Address
+- [ ] Config
+  - [ ] Enable OSC
+  - [ ] OSC Port
 
 ## Installing
 
