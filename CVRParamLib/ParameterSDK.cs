@@ -10,9 +10,24 @@ public static class ParameterSDK
     public static void SetAvatarParameter(string name, float value) => ParameterManager.UpdateParameter(name, value);
 
     /// <summary>
+    /// Returns the value for the Animator Parameter.
+    /// </summary>
+    /// <param name="name">The name of the Parameter</param>
+    /// <returns>The Parameter Value. Null only if CVRParameterInstance is null.</returns>
+    public static float? GetAvatarParameterValue(string name) =>
+        CVRParameterInstance.Instance?.PlayerSetup.GetAnimatorParam(name);
+
+    /// <summary>
+    /// Returns the value for the cached Parameter
+    /// </summary>
+    /// <param name="name">The name of the Parameter</param>
+    /// <returns>The Parameter Value. Null if the parameter is not cached</returns>
+    public static float? GetCachedAvatarParameterValue(string name) => ParameterManager.GetParameterValue(name);
+
+    /// <summary>
     /// Removes a Parameter from cache; will stop updating on the Avatar.
     /// NOTE: This does NOT delete the Avatar's Parameter!
     /// </summary>
-    /// <param name="name"></param>
-    public static void RemoveAvatarParameter(string name) => ParameterManager.DeleteParameter(name);
+    /// <param name="name">The name of the Parameter</param>
+    public static void RemoveCachedAvatarParameter(string name) => ParameterManager.DeleteParameter(name);
 }

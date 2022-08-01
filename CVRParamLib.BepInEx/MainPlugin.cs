@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using System.Collections.Generic;
 using ABI_RC.Core.Player;
 using BepInEx;
 using HarmonyLib;
@@ -37,13 +38,13 @@ public class MainPlugin : BaseUnityPlugin
         OSCManager.Init();
     }
     
-    private void OnUpdate()
+    private void Update()
     {
-        foreach (string parametersKey in ParameterManager.Parameters.Keys)
+        Dictionary<string, float> p = new(ParameterManager.Parameters);
+        foreach (string parametersKey in p.Keys)
         {
-            float paramValue = ParameterManager.GetParameterValue(parametersKey) ?? default;
-            if (_instance?.DoesParamNeedUpdated(parametersKey) ?? false)
-                _instance.UpdateParameter(parametersKey, paramValue);
+            float paramValue = ParameterManager.GetParameterValue(parametersKey, p) ?? default;
+            _instance?.UpdateParameter(parametersKey, paramValue);
         }
     }
 

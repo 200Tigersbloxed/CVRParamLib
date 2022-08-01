@@ -25,11 +25,13 @@ public class ParameterManager
             Parameters.Remove(name);
     }
 
-    public static float? GetParameterValue(string name)
+    public static float? GetParameterValue(string name, Dictionary<string, float> parameters = null)
     {
-        if (!Parameters.ContainsKey(name))
+        if (parameters == null)
+            parameters = new(Parameters);
+        if (!parameters.ContainsKey(name))
             return null;
-        return Parameters[name];
+        return parameters[name];
     }
     
     public static bool? AreDifferent(string name, float value)
