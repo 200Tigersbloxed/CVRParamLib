@@ -1,13 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
+using ABI.CCK.Scripts;
 
 namespace CVRParamLib;
 
 public class ParameterManager
 {
+    public static readonly List<AvatarParameter> CurrentAvatarParameters = new();
     public static readonly Dictionary<string, float> Parameters = new();
 
     public static bool IsParameterRegistered(string name) => Parameters.ContainsKey(name);
+
+    public static bool IsAnAvatarParameter(string name) =>
+        CurrentAvatarParameters.Where(x => x.name == name).ToList().Count > 0;
     
     public static void UpdateParameter(string name, float value)
     {
@@ -44,5 +49,13 @@ public class ParameterManager
         if (registeredValue != value)
             return true;
         return false;
+    }
+
+    public static void OnLocalAvatarChange(List<CVRAdvancedSettingsEntry> settingsEntries)
+    {
+        CurrentAvatarParameters.Clear();
+        foreach (CVRAdvancedSettingsEntry cvrAdvancedSettingsEntry in settingsEntries)
+            if(!IsAnAvatarParameter(cvrAdvancedSettingsEntry.name))
+                CurrentAvatarParameters.Add(new(cvrAdvancedSettingsEntry));
     }
 }

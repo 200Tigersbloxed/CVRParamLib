@@ -37,6 +37,9 @@
         <Reference Include="Assembly-CSharp">
           <HintPath>C:\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\Assembly-CSharp.dll</HintPath>
         </Reference>
+        <Reference Include="DarkRift">
+          <HintPath>C:\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\DarkRift.dll</HintPath>
+        </Reference>
         <Reference Include="Microsoft.Build.Framework, Version=15.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
           <HintPath>..\packages\Microsoft.Build.Framework.15.9.20\lib\net46\Microsoft.Build.Framework.dll</HintPath>
         </Reference>
@@ -47,6 +50,9 @@
           <HintPath>..\packages\Microsoft.VisualStudio.Setup.Configuration.Interop.1.16.30\lib\net35\Microsoft.VisualStudio.Setup.Configuration.Interop.dll</HintPath>
         </Reference>
         <Reference Include="mscorlib" />
+        <Reference Include="Newtonsoft.Json">
+          <HintPath>C:\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\Newtonsoft.Json.dll</HintPath>
+        </Reference>
         <Reference Include="SharpOSC">
           <HintPath>Libraries\SharpOSC.dll</HintPath>
         </Reference>
@@ -62,6 +68,9 @@
         </Reference>
         <Reference Include="System.Xaml" />
         <Reference Include="System.Xml" />
+        <Reference Include="Tomlet, Version=3.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+          <HintPath>..\packages\Samboy063.Tomlet.3.2.0\lib\net35\Tomlet.dll</HintPath>
+        </Reference>
         <Reference Include="UnityEngine">
           <HintPath>C:\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\UnityEngine.dll</HintPath>
         </Reference>
@@ -70,10 +79,14 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="AvatarHandler.cs" />
+        <Compile Include="Config.cs" />
         <Compile Include="CVRParameterInstance.cs" />
+        <Compile Include="HelpfulTools.cs" />
         <Compile Include="OSCManager.cs" />
         <Compile Include="ParameterManager.cs" />
         <Compile Include="ParameterSDK.cs" />
+        <Compile Include="ParameterWriter.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>
@@ -103,6 +116,7 @@
         </PropertyGroup>
         <ItemGroup>
             <InputAssemblies Include="SharpOSC.dll" />
+            <InputAssemblies Include="Tomlet.dll" />
         </ItemGroup>
         <ILRepack OutputType="$(OutputType)" MainAssembly="$(AssemblyName).dll" OutputAssembly="$(AssemblyName).dll" InputAssemblies="@(InputAssemblies)" InternalizeExcludeAssemblies="@(InternalizeExcludeAssemblies)" WorkingDirectory="$(WorkingDirectory)" />
     </Target>

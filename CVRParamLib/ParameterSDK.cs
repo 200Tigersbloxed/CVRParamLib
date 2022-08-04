@@ -1,7 +1,14 @@
-﻿namespace CVRParamLib;
+﻿using System;
+
+namespace CVRParamLib;
 
 public static class ParameterSDK
 {
+    /// <summary>
+    /// Invoked whenever the LocalPLayer changes their avatar
+    /// </summary>
+    public static Action<string> OnLocalAvatarChanged = avatarId => { };
+
     /// <summary>
     /// Adds, or updates, Parameter with value to cache to be updated on the main Avatar
     /// </summary>
