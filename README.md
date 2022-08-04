@@ -15,7 +15,7 @@ This guide is split into two loaders, please follow the guide for which mod load
 
 1. Install [MelonLoader](https://github.com/LavaGang/MelonLoader)
 2. Download [CVRParamLib.MelonLoader.dll](https://github.com/200Tigersbloxed/CVRParamLib/releases/latest/download/CVRParamLib.MelonLoader.dll)
-3. Place the dll at `[ChilloutVR]\Mods`
+3. Place the dll at `[ChilloutVR]/Mods`
 
 ### BepInEx
 
