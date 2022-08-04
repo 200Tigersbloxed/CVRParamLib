@@ -8,7 +8,7 @@ This guide is split into two loaders, please follow the guide for which mod load
 > ___
 > ### ⚠️ **Notice!**
 > 
-> This mod developer(s) and the mod itself, along with the respective mod loaders, have no affiliation with ABI and are not supported by ABI!
+> This mod's developer(s) and the mod itself, along with the respective mod loaders, have no affiliation with ABI!
 > ___
 
 ### MelonLoader
