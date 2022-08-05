@@ -10,7 +10,7 @@ using BepInEx;
 
 namespace CVRParamLib.BepInEx;
 
-[BepInPlugin("bepinex.cvrparamlib.fortnite.lol", "CVRParamLib.BepInEx", "1.1.0")]
+[BepInPlugin("bepinex.cvrparamlib.fortnite.lol", "CVRParamLib.BepInEx", "1.1.1")]
 [BepInProcess("ChilloutVR.exe")]
 public class MainPlugin : BaseUnityPlugin
 {

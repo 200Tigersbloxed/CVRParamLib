@@ -47,7 +47,7 @@ public class Config
     public string ParameterFileTargetLocation { get; set; } = "both";
 
     [TomlProperty("UseVRChatIds")]
-    [TomlPrecedingComment("Whether or not to append usr_ or _avtr at the beginning of a CVR GUID. Does not affect TargetUserIdFolder Override")]
+    [TomlPrecedingComment("Whether or not to append usr_ or avtr_ at the beginning of a CVR GUID. Does not affect TargetUserIdFolder Override")]
     public bool UseVRChatIds { get; set; } = true;
 
     [TomlProperty("TargetUserIdFolder")]

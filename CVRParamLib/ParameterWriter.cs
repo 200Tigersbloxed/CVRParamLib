@@ -127,10 +127,13 @@ public static class ParameterWriter
     public static void OnLocalAvatarChange()
     {
         AvatarInfo avatarInfo = AvatarHandler.GetAvatarInfoFromId(AvatarHandler.CurrentAvatarId);
+        string id = AvatarHandler.CurrentAvatarId;
+        if (Config.LoadedConfig.UseVRChatIds)
+            id = $"avtr_{AvatarHandler.CurrentAvatarId}";
         List<AvatarParameter> parameters = GetAvatarParameters();
         AvatarSheet avatarSheet = new AvatarSheet
         {
-            id = AvatarHandler.CurrentAvatarId,
+            id = id,
             parameters = parameters
         };
         if (avatarInfo == null)
