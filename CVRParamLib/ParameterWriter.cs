@@ -92,11 +92,8 @@ public static class ParameterWriter
     {
         List<string> dirs = GetEssentialDirectory(Config.LoadedConfig.ParameterFileTargetLocation.ToLower());
         string json = JsonConvert.SerializeObject(avatarSheet, Formatting.Indented);
-        string filename = $"{avatarSheet.id}.json";
-        if (Config.LoadedConfig.UseVRChatIds)
-            filename = $"avtr_{avatarSheet.id}.json";
         foreach (string dir in dirs)
-            WriteFile(Path.Combine(dir, filename), json);
+            WriteFile(Path.Combine(dir, $"{avatarSheet.id}.json"), json);
     }
 
     private static void FinalizeAvatarSheet(AvatarInfo avatarInfo, AvatarSheet avatarSheet)
@@ -107,6 +104,7 @@ public static class ParameterWriter
             TryWriteToFile(avatarSheet);
             CVRParameterInstance.WriteLog(CVRParameterInstance.LogLevel.Debug,
                 $"Finalized AvatarSheet with Id {avatarSheet.id}");
+            OSCMessageHandler.HandleAvatarChange(AvatarHandler.CurrentAvatarId);
         }
         catch (Exception e)
         {

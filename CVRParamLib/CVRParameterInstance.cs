@@ -48,7 +48,6 @@ public class CVRParameterInstance
     public void HarmonyAvatarChange(string avatarId)
     {
         avatar = null;
-        OSCMessageHandler.HandleAvatarChange(avatarId);
         AvatarHandler.OnLocalAvatarChanged(avatarId);
         CacheAvatarToAvatarList(avatarId);
         ParameterSDK.OnLocalAvatarChanged.Invoke(avatarId);

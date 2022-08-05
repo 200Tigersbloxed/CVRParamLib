@@ -33,8 +33,8 @@ using MelonLoader;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.1.1.0")]
-[assembly: AssemblyFileVersion("1.1.1.0")]
+[assembly: AssemblyVersion("1.1.2.0")]
+[assembly: AssemblyFileVersion("1.1.2.0")]
 
-[assembly: MelonInfo(typeof(MainMod), "CVRParamLib.MelonLoader", "1.1.1", "200Tigersbloxed")]
+[assembly: MelonInfo(typeof(MainMod), "CVRParamLib.MelonLoader", "1.1.2", "200Tigersbloxed")]
 [assembly: MelonGame("Alpha Blend Interactive", "ChilloutVR")]
