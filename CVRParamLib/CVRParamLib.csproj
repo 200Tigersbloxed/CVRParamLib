@@ -34,11 +34,20 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
+        <Reference Include="0Harmony">
+          <HintPath>C:\Program Files (x86)\Steam\steamapps\common\ChilloutVR\MelonLoader\0Harmony.dll</HintPath>
+        </Reference>
         <Reference Include="Assembly-CSharp">
           <HintPath>C:\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\Assembly-CSharp.dll</HintPath>
         </Reference>
+        <Reference Include="BepInEx">
+          <HintPath>C:\Program Files (x86)\Steam\steamapps\common\ChilloutVR\BepInEx\core\BepInEx.dll</HintPath>
+        </Reference>
         <Reference Include="DarkRift">
           <HintPath>C:\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\DarkRift.dll</HintPath>
+        </Reference>
+        <Reference Include="MelonLoader">
+          <HintPath>C:\Program Files (x86)\Steam\steamapps\common\ChilloutVR\MelonLoader\MelonLoader.dll</HintPath>
         </Reference>
         <Reference Include="Microsoft.Build.Framework, Version=15.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
           <HintPath>..\packages\Microsoft.Build.Framework.15.9.20\lib\net46\Microsoft.Build.Framework.dll</HintPath>
@@ -83,6 +92,7 @@
         <Compile Include="Config.cs" />
         <Compile Include="CVRParameterInstance.cs" />
         <Compile Include="HelpfulTools.cs" />
+        <Compile Include="ModPluginLoader.cs" />
         <Compile Include="OSCManager.cs" />
         <Compile Include="ParameterManager.cs" />
         <Compile Include="ParameterSDK.cs" />
@@ -118,6 +128,11 @@
             <InputAssemblies Include="SharpOSC.dll" />
             <InputAssemblies Include="Tomlet.dll" />
         </ItemGroup>
-        <ILRepack OutputType="$(OutputType)" MainAssembly="$(AssemblyName).dll" OutputAssembly="$(AssemblyName).dll" InputAssemblies="@(InputAssemblies)" InternalizeExcludeAssemblies="@(InternalizeExcludeAssemblies)" WorkingDirectory="$(WorkingDirectory)" />
+        <ILRepack OutputType="$(OutputType)"
+                  MainAssembly="$(AssemblyName).dll"
+                  OutputAssembly="$(AssemblyName).dll"
+                  InputAssemblies="@(InputAssemblies)"
+                  InternalizeExcludeAssemblies="@(InternalizeExcludeAssemblies)"
+                  WorkingDirectory="$(WorkingDirectory)" />
     </Target>
 </Project>

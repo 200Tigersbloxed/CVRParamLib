@@ -2,12 +2,14 @@
 
 using System;
 using System.Collections;
+using System.Threading.Tasks;
 using ABI.CCK.Components;
-using ABI_RC.Core.Networking;
+using ABI_RC.Core;
+using ABI_RC.Core.Networking.API;
+using ABI_RC.Core.Networking.API.Responses;
 using ABI_RC.Core.Networking.IO.UserGeneratedContent;
 using ABI_RC.Core.Player;
 using ABI_RC.Core.Savior;
-using DarkRift;
 using UnityEngine;
 
 namespace CVRParamLib;
@@ -55,12 +57,40 @@ public class CVRParameterInstance
 
     private IEnumerator cacheEnum(string avatarId)
     {
-        while (NetworkManager.Instance.Api.ConnectionState != ConnectionState.Connected)
+        // ViewManager.cs Task RequestAvatarDetailsPageTask(string avatarID)
+        Task t = Task.Run(async () =>
         {
-            yield return new WaitForSeconds(0.01f);
-        }
-        Avatars.RequestDetails(avatarId);
+            AvatarDetails_t avatarDetailsT = new AvatarDetails_t();
+            BaseResponse<AvatarDetailsResponse> baseResponse = await ApiConnection.MakeRequest<AvatarDetailsResponse>(
+                ApiConnection.ApiOperation.AvatarDetail, new
+                {
+                    avatarID = avatarId
+                });
+            if (baseResponse == null)
+            {
+                WriteLog(LogLevel.Warning, $"Avatar with ID {avatarId} had a null BaseRepsonse");
+                return;
+            }
+            avatarDetailsT.AvatarId = baseResponse.Data.Id;
+            avatarDetailsT.AvatarName = baseResponse.Data.Name;
+            avatarDetailsT.AvatarDesc = baseResponse.Data.Description;
+            avatarDetailsT.AvatarImageUrl = baseResponse.Data.ImageUrl;
+            avatarDetailsT.AuthorId = baseResponse.Data.User.Id;
+            avatarDetailsT.AuthorName = baseResponse.Data.User.Name;
+            avatarDetailsT.AuthorImageUrl = baseResponse.Data.ImageUrl;
+            avatarDetailsT.Tags = string.Join(",", baseResponse.Data.Tags);
+            avatarDetailsT.FilterTags = string.Join(",", baseResponse.Data.Categories);
+            avatarDetailsT.UploadedAt = baseResponse.Data.UploadedAt.ToString("yyyy-MM-dd");
+            avatarDetailsT.UpdatedAt = baseResponse.Data.UpdatedAt.ToString("yyyy-MM-dd");
+            avatarDetailsT.FileSize = CVRTools.HumanReadableFilesize(baseResponse.Data.FileSize);
+            avatarDetailsT.IsSharedWithMe = baseResponse.Data.SwitchPermitted;
+            avatarDetailsT.IsMine = baseResponse.Data.User.Id == MetaPort.Instance.ownerId;
+            avatarDetailsT.IsPublic = baseResponse.Data.IsPublished;
+            AvatarHandler.CacheAvatar(avatarDetailsT);
+        });
         WriteLog(LogLevel.Debug, $"Sent out request for avatarId {avatarId}");
+        while (!t.IsCompleted)
+            yield return new WaitForSeconds(0.01f);
     }
 
     private void CacheAvatarToAvatarList(string avatarId)

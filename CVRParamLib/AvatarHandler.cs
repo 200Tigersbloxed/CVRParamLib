@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ABI_RC.Core.Networking.API.Responses;
 using ABI_RC.Core.Networking.IO.UserGeneratedContent;
 
 namespace CVRParamLib;
@@ -15,6 +16,9 @@ public static class AvatarHandler
     
     private static bool IsAvatarCached(AvatarDetails_t avatar) =>
         CachedAvatars.Where(x => x.AvatarId == avatar.AvatarId).ToList().Count > 0;
+    
+    private static bool IsAvatarCached(AvatarDetailsResponse avatar) =>
+        CachedAvatars.Where(x => x.AvatarId == avatar.Id).ToList().Count > 0;
     
     public static bool IsAvatarCached(string avatarId) =>
         CachedAvatars.Where(x => x.AvatarId == avatarId).ToList().Count > 0;
@@ -104,5 +108,16 @@ public record AvatarInfo
         AvatarVersion = 0;
         AvatarAuthorId = avatarDetails.AuthorId;
         FilterTags = avatarDetails.FilterTags;
+    }
+
+    public AvatarInfo(AvatarDetailsResponse avatarDetailsResponse)
+    {
+        AvatarId = avatarDetailsResponse.Id;
+        AvatarName = avatarDetailsResponse.Name;
+        AvatarDesc = avatarDetailsResponse.Description;
+        AvatarImageUrl = avatarDetailsResponse.ImageUrl;
+        AvatarVersion = 0;
+        AvatarAuthorId = avatarDetailsResponse.User.Id;
+        FilterTags = string.Join(",", avatarDetailsResponse.Categories);
     }
 }

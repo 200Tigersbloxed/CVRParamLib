@@ -91,9 +91,15 @@ public static class ParameterWriter
     private static void TryWriteToFile(AvatarSheet avatarSheet)
     {
         List<string> dirs = GetEssentialDirectory(Config.LoadedConfig.ParameterFileTargetLocation.ToLower());
-        string json = JsonConvert.SerializeObject(avatarSheet, Formatting.Indented);
+        AvatarSheet newAvatarSheet = new AvatarSheet(avatarSheet);
+        if (Config.LoadedConfig.UseVRChatIds)
+            newAvatarSheet.id = $"avtr_{avatarSheet.id}";
+        string json = JsonConvert.SerializeObject(newAvatarSheet, Formatting.Indented);
+        string filename = $"{avatarSheet.id}.json";
+        if (Config.LoadedConfig.UseVRChatIds)
+            filename = $"avtr_{avatarSheet.id}.json";
         foreach (string dir in dirs)
-            WriteFile(Path.Combine(dir, $"{avatarSheet.id}.json"), json);
+            WriteFile(Path.Combine(dir, filename), json);
     }
 
     private static void FinalizeAvatarSheet(AvatarInfo avatarInfo, AvatarSheet avatarSheet)
@@ -104,7 +110,8 @@ public static class ParameterWriter
             TryWriteToFile(avatarSheet);
             CVRParameterInstance.WriteLog(CVRParameterInstance.LogLevel.Debug,
                 $"Finalized AvatarSheet with Id {avatarSheet.id}");
-            OSCMessageHandler.HandleAvatarChange(AvatarHandler.CurrentAvatarId);
+            if(avatarSheet.id == AvatarHandler.CurrentAvatarId)
+                OSCMessageHandler.HandleAvatarChange(AvatarHandler.CurrentAvatarId);
         }
         catch (Exception e)
         {
@@ -126,8 +133,6 @@ public static class ParameterWriter
     {
         AvatarInfo avatarInfo = AvatarHandler.GetAvatarInfoFromId(AvatarHandler.CurrentAvatarId);
         string id = AvatarHandler.CurrentAvatarId;
-        if (Config.LoadedConfig.UseVRChatIds)
-            id = $"avtr_{AvatarHandler.CurrentAvatarId}";
         List<AvatarParameter> parameters = GetAvatarParameters();
         AvatarSheet avatarSheet = new AvatarSheet
         {
@@ -146,6 +151,15 @@ public record AvatarSheet
     public string id { get; set; }
     public string name { get; set; }
     public List<AvatarParameter> parameters { get; set; }
+
+    public AvatarSheet(){}
+
+    public AvatarSheet(AvatarSheet avatarSheet)
+    {
+        id = avatarSheet.id;
+        name = avatarSheet.name;
+        parameters = avatarSheet.parameters;
+    }
 }
 
 public record AvatarParameter

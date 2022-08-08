@@ -1,10 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CVRParamLib.MelonLoader", "CVRParamLib.MelonLoader\CVRParamLib.MelonLoader.csproj", "{20DD45A3-7545-430E-B062-3F7118209B0D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CVRParamLib", "CVRParamLib\CVRParamLib.csproj", "{090CB0FF-ACCD-477F-8DF9-699B64811A93}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CVRParamLib.BepInEx", "CVRParamLib.BepInEx\CVRParamLib.BepInEx.csproj", "{70F42126-1CCE-4031-B030-5B3944CFBF17}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
