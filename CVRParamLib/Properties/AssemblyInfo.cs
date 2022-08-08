@@ -36,6 +36,6 @@ using MelonLoader;
 [assembly: AssemblyVersion("1.2.0.0")]
 [assembly: AssemblyFileVersion("1.2.0.0")]
 
-[assembly: MelonInfo(typeof(MelonLoaderMod), "CVRParamLib.MelonLoader", "1.2.0", "200Tigersbloxed")]
+[assembly: MelonInfo(typeof(MelonLoaderMod), "CVRParamLib", "1.2.0", "200Tigersbloxed")]
 [assembly: MelonGame("Alpha Blend Interactive", "ChilloutVR")]
 [assembly: MelonOptionalDependencies("BepInEx")]

@@ -43,9 +43,6 @@
         <Reference Include="BepInEx">
           <HintPath>C:\Program Files (x86)\Steam\steamapps\common\ChilloutVR\BepInEx\core\BepInEx.dll</HintPath>
         </Reference>
-        <Reference Include="DarkRift">
-          <HintPath>C:\Program Files (x86)\Steam\steamapps\common\ChilloutVR\ChilloutVR_Data\Managed\DarkRift.dll</HintPath>
-        </Reference>
         <Reference Include="MelonLoader">
           <HintPath>C:\Program Files (x86)\Steam\steamapps\common\ChilloutVR\MelonLoader\MelonLoader.dll</HintPath>
         </Reference>
@@ -128,11 +125,6 @@
             <InputAssemblies Include="SharpOSC.dll" />
             <InputAssemblies Include="Tomlet.dll" />
         </ItemGroup>
-        <ILRepack OutputType="$(OutputType)"
-                  MainAssembly="$(AssemblyName).dll"
-                  OutputAssembly="$(AssemblyName).dll"
-                  InputAssemblies="@(InputAssemblies)"
-                  InternalizeExcludeAssemblies="@(InternalizeExcludeAssemblies)"
-                  WorkingDirectory="$(WorkingDirectory)" />
+        <ILRepack OutputType="$(OutputType)" MainAssembly="$(AssemblyName).dll" OutputAssembly="$(AssemblyName).dll" InputAssemblies="@(InputAssemblies)" InternalizeExcludeAssemblies="@(InternalizeExcludeAssemblies)" WorkingDirectory="$(WorkingDirectory)" />
     </Target>
 </Project>
