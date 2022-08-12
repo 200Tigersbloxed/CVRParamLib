@@ -43,8 +43,9 @@ internal class RandomFloatParameter : BaseUnityPlugin
                 return;
             }
             foreach (FullAvatarParameter fullAvatarParameter in avatarParams)
-                if (fullAvatarParameter.Name == "RandomFloat" && fullAvatarParameter.ParameterType == typeof(float))
-                        randomFloatParameter = fullAvatarParameter;
+                if (fullAvatarParameter.Name == "RandomFloat" &&
+                    fullAvatarParameter.ParameterType == typeof(float))
+                    randomFloatParameter = fullAvatarParameter;
         };
     }
 
