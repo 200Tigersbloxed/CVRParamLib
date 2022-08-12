@@ -14,15 +14,47 @@ This guide is split into two loaders, please follow the guide for which mod load
 ### MelonLoader
 
 1. Install [MelonLoader](https://github.com/LavaGang/MelonLoader)
-2. Download [CVRParamLib.MelonLoader.dll](https://github.com/200Tigersbloxed/CVRParamLib/releases/latest/download/CVRParamLib.MelonLoader.dll)
+2. Download [CVRParamLib.dll](https://github.com/200Tigersbloxed/CVRParamLib/releases/latest/download/CVRParamLib.dll)
 3. Place the dll at `[ChilloutVR]/Mods`
 
 ### BepInEx
 
 1. Install [BepInEx](https://github.com/BepInEx/BepInEx)
     + You may need to run the game once for all required directories to appear
-2. Download [CVRParamLib.BepInEx.dll](https://github.com/200Tigersbloxed/CVRParamLib/releases/latest/download/CVRParamLib.BepInEx.dll)
+2. Download [CVRParamLib.dll](https://github.com/200Tigersbloxed/CVRParamLib/releases/latest/download/CVRParamLib.dll)
 3. Place the dll at `[ChilloutVR]/BepInEx/plugins`
+
+## Example Library
+
+This example will get all Parameters, look for a Parameter called `RandomFloat`, with a ParameterType of `float` and assign it a random float each Update frame. This example depicts a BepInEx plugin, however the same can be done with a MelonLoader mod.
+
+```cs
+internal class RandomFloatParameter : BaseUnityPlugin
+{
+    private FullAvatarParameter randomFloatParameter;
+    
+    void Start()
+    {
+        ParameterSDK.OnLocalAvatarChanged += (avatar, info, avatarParams) =>
+        {
+            if (!avatarParams.Exists(x => x.Name == "RandomFloat" && x.ParameterType == typeof(float)))
+            {
+                randomFloatParameter = null;
+                return;
+            }
+            foreach (FullAvatarParameter fullAvatarParameter in avatarParams)
+                if (fullAvatarParameter.Name == "RandomFloat" && fullAvatarParameter.ParameterType == typeof(float))
+                        randomFloatParameter = fullAvatarParameter;
+        };
+    }
+
+    void Update()
+    {
+        if(randomFloatParameter != null)
+            ParameterSDK.SetAvatarParameter(randomFloatParameter.Name, (float) new Random().NextDouble());
+    }
+}
+```
 
 ## Checklist
 
