@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System;
 using System.IO;
@@ -213,5 +213,20 @@ internal class HarmonyPatches
     {
         [HarmonyPrefix]
         static void Recycle(AvatarDetails_t __instance) => AvatarHandler.CacheAvatar(__instance);
+    }
+    
+    [HarmonyPatch(typeof(PlayerSetup), "changeAnimatorParam")]
+    class ChangeAnimatorParam_Hook
+    {
+        [HarmonyPostfix]
+        static void changeAnimatorParam(string name, float value) {
+            CVRParameterInstance.WriteLog(CVRParameterInstance.LogLevel.Debug,
+                $"Parameter {name} changed to {value}.");
+            // Todo: Use this to drive parameter changes instead of checking in update loop
+            // Note1: Parameters driven by the CVR Stream component will spam the hell out of this method.
+            // Note2: When a slider is being used, will also spam as well.
+            // So a check with a dictionary far values change is advised, also for comparision of floats I would
+            // recommend using this: https://docs.unity3d.com/ScriptReference/Mathf.Approximately.html
+        }
     }
 }
