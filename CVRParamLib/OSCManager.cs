@@ -7,7 +7,7 @@ using SharpOSC;
 
 namespace CVRParamLib;
 
-public class OSCManager
+internal class OSCManager
 {
     private static UDPListener? listener;
     public static Action<OscMessage?> OnOscMessage = oscm => { };
@@ -56,7 +56,7 @@ public class OSCManager
     }
 }
 
-public static class OSCMessageHandler
+internal static class OSCMessageHandler
 {
     public static void HandleAvatarParameter(string address, List<object> data)
     {
@@ -76,6 +76,12 @@ public static class OSCMessageHandler
         }
     }
 
+    public static void HandleParameterUpdate(FullAvatarParameter fullAvatarParameter)
+    {
+        object data = Convert.ChangeType(fullAvatarParameter.Value, fullAvatarParameter.ParameterType);
+        OSCManager.SendMessage($"/avatar/parameters/{fullAvatarParameter.Name}", data);
+    }
+
     public static void HandleAvatarChange(string avatarId)
     {
         CVRParameterInstance.WriteLog(CVRParameterInstance.LogLevel.Debug, $"Avatar changed to {avatarId}");
@@ -86,7 +92,7 @@ public static class OSCMessageHandler
     }
 }
 
-public static class OSCInputManagement
+internal static class OSCInputManagement
 {
     public static OSCInputs OSCInputFromString(string input) => (OSCInputs) Enum.Parse(typeof(OSCInputs), input);
     
@@ -123,7 +129,7 @@ public static class OSCInputManagement
         Voice
     }
 
-    private static bool didTryInput = false;
+    private static bool didTryInput;
     public static void HandleAvatarInput(OSCInputManagement.OSCInputs input, float value)
     {
         // TODO: Handle Input

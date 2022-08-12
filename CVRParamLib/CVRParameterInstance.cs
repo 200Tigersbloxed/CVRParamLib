@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ABI.CCK.Components;
 using ABI_RC.Core;
@@ -32,27 +33,33 @@ public class CVRParameterInstance
         WriteLog(LogLevel.Log, "CVRParameterInstance Created!");
     }
 
-    public void Update()
+    internal void Update()
     {
+        Dictionary<string, float> p = new(ParameterManager.Parameters);
+        foreach (string parametersKey in p.Keys)
+        {
+            float paramValue = ParameterManager.GetParameterValue(parametersKey, p) ?? default;
+            ReplicatedModInfo._instance?.UpdateParameter(parametersKey, paramValue);
+        }
         AvatarHandler.Update();
         if (PlayerSetup._avatar != null && _avatarGO != PlayerSetup._avatar)
         {
             _avatarGO = PlayerSetup._avatar;
             avatar = _avatarGO.GetComponent<CVRAvatar>();
-            ParameterManager.OnLocalAvatarChange(avatar.avatarSettings.settings);
+            ParameterManager.OnLocalAvatarChange(PlayerSetup.animatorManager);
             ParameterWriter.OnLocalAvatarChange();
         }
+        ParameterManager.Update();
     }
 
-    public static void PrepareLog(Action<LogLevel, object> _log) => Log = _log;
-    public static void PrepareCoroutine(Action<IEnumerator> _coroutine) => Coroutine = _coroutine;
+    internal static void PrepareLog(Action<LogLevel, object> _log) => Log = _log;
+    internal static void PrepareCoroutine(Action<IEnumerator> _coroutine) => Coroutine = _coroutine;
 
-    public void HarmonyAvatarChange(string avatarId)
+    internal void HarmonyAvatarChange(string avatarId)
     {
         avatar = null;
         AvatarHandler.OnLocalAvatarChanged(avatarId);
         CacheAvatarToAvatarList(avatarId);
-        ParameterSDK.OnLocalAvatarChanged.Invoke(avatarId);
     }
 
     private IEnumerator cacheEnum(string avatarId)
@@ -104,21 +111,15 @@ public class CVRParameterInstance
     }
 
     public static void WriteLog(LogLevel logLevel, object msg) => Log?.Invoke(logLevel, msg);
-    public static void CreateCoroutine(IEnumerator enumerator) => Coroutine?.Invoke(enumerator);
+    internal static void CreateCoroutine(IEnumerator enumerator) => Coroutine?.Invoke(enumerator);
 
-    public void UpdatePlayerSetup(PlayerSetup _playerSetup)
+    internal void UpdatePlayerSetup(PlayerSetup _playerSetup)
     {
         PlayerSetup = _playerSetup;
         WriteLog(LogLevel.Debug, "PlayerSetup was updated");
     }
 
-    public bool DoesParamNeedUpdated(string name)
-    {
-        bool areDifferent = ParameterManager.AreDifferent(name, PlayerSetup.GetAnimatorParam(name)) ?? false;
-        return areDifferent;
-    }
-
-    public void UpdateParameter(string name, float value) => PlayerSetup.changeAnimatorParam(name, value);
+    internal void UpdateParameter(string name, float value) => PlayerSetup.changeAnimatorParam(name, value);
 
     public enum LogLevel
     {

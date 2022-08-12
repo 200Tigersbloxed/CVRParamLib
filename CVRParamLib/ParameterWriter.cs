@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using ABI.CCK.Scripts;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace CVRParamLib;
 
-public static class ParameterWriter
+internal static class ParameterWriter
 {
     private static List<AvatarSheet> waitingAvatarInfo = new();
 
@@ -17,7 +18,10 @@ public static class ParameterWriter
             CVRParameterInstance.WriteLog(CVRParameterInstance.LogLevel.Error, "CVRParameterInstance cannot be null!");
             return null;
         }
-        List<AvatarParameter> aps = new(ParameterManager.CurrentAvatarParameters);
+        List<AvatarParameter> aps = new();
+        List<FullAvatarParameter> faps = new(ParameterManager.CurrentAvatarParameters);
+        foreach (FullAvatarParameter fullAvatarParameter in faps)
+            aps.Add(new(fullAvatarParameter));
         return aps;
     }
 
@@ -110,8 +114,12 @@ public static class ParameterWriter
             TryWriteToFile(avatarSheet);
             CVRParameterInstance.WriteLog(CVRParameterInstance.LogLevel.Debug,
                 $"Finalized AvatarSheet with Id {avatarSheet.id}");
-            if(avatarSheet.id == AvatarHandler.CurrentAvatarId)
+            if (avatarSheet.id == AvatarHandler.CurrentAvatarId)
+            {
                 OSCMessageHandler.HandleAvatarChange(AvatarHandler.CurrentAvatarId);
+                ParameterSDK.OnLocalAvatarChanged.Invoke(CVRParameterInstance.Instance!.avatar, avatarInfo,
+                    ParameterManager.CurrentAvatarParameters);
+            }
         }
         catch (Exception e)
         {
@@ -185,8 +193,25 @@ public record AvatarParameter
                 type = typeof(bool);
                 break;
         }
-        input = new AvatarParameterInputOutput(name, type);
-        output = new AvatarParameterInputOutput(name, type);
+        input = new (name, type);
+        output = new(name, type);
+    }
+
+    public AvatarParameter(AnimatorControllerParameter animatorControllerParameter)
+    {
+        name = animatorControllerParameter.name;
+        Type type = FullAvatarParameter.CastType(animatorControllerParameter.type);
+        if (type == typeof(object))
+            return;
+        input = new(name, type);
+        output = new(name, type);
+    }
+
+    public AvatarParameter(FullAvatarParameter fullAvatarParameter)
+    {
+        name = fullAvatarParameter.Name;
+        input = new(name, fullAvatarParameter.ParameterType);
+        output = new(name, fullAvatarParameter.ParameterType);
     }
 }
 

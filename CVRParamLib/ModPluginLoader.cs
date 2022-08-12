@@ -1,7 +1,6 @@
 ﻿#nullable enable
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using ABI_RC.Core.Networking.IO.UserGeneratedContent;
 using ABI_RC.Core.Player;
@@ -13,13 +12,13 @@ using UnityEngine;
 
 namespace CVRParamLib;
 
-public static class ReplicatedModInfo
+internal static class ReplicatedModInfo
 {
     public static CVRParameterInstance? _instance;
     public static HarmonyPatches hi = new();
 }
 
-public class MelonLoaderMod : MelonMod
+internal class MelonLoaderMod : MelonMod
 {
     private readonly HarmonyLib.Harmony _harmony = new("CVRParamLib.MelonLoader-patch");
     private static readonly string ConfigLocation = Path.Combine(MelonUtils.UserDataDirectory, "CVRParamLibConfig.cfg");
@@ -35,16 +34,16 @@ public class MelonLoaderMod : MelonMod
                 case CVRParameterInstance.LogLevel.Debug:
                     if(!Config.LoadedConfig.ShowDebug)
                         break;
-                    MelonLogger.Msg(ConsoleColor.Gray, $"[CVRParamLib] {o}");
+                    MelonLogger.Msg(ConsoleColor.Gray, o);
                     break;
                 case CVRParameterInstance.LogLevel.Log:
-                    MelonLogger.Msg($"[CVRParamLib] {o}");
+                    MelonLogger.Msg(o);
                     break;
                 case CVRParameterInstance.LogLevel.Warning:
-                    MelonLogger.Warning($"[CVRParamLib] {o}");
+                    MelonLogger.Warning(o);
                     break;
                 case CVRParameterInstance.LogLevel.Error:
-                    MelonLogger.Error($"[CVRParamLib] {o}");
+                    MelonLogger.Error(o);
                     break;
             }
         });
@@ -62,14 +61,15 @@ public class MelonLoaderMod : MelonMod
 
     public override void OnUpdate()
     {
-        Dictionary<string, float> p = new(ParameterManager.Parameters);
-        foreach (string parametersKey in p.Keys)
-        {
-            float paramValue = ParameterManager.GetParameterValue(parametersKey, p) ?? default;
-            ReplicatedModInfo._instance?.UpdateParameter(parametersKey, paramValue);
-        }
         ReplicatedModInfo._instance?.Update();
         base.OnUpdate();
+    }
+
+    public override void OnGUI()
+    {
+        if(Config.LoadedConfig.ShowDebug)
+            GUIDebug.OnGUI();
+        base.OnGUI();
     }
 
     public override void OnApplicationQuit()
@@ -87,9 +87,9 @@ public class MelonLoaderMod : MelonMod
     }
 }
 
-[BepInPlugin("cvrparamlib.fortnite.lol", "CVRParamLib", "1.2.0")]
+[BepInPlugin("cvrparamlib.fortnite.lol", "CVRParamLib", "1.3.0")]
 [BepInProcess("ChilloutVR.exe")]
-public class BepInExMod : BaseUnityPlugin
+internal class BepInExMod : BaseUnityPlugin
 {
     private readonly HarmonyLib.Harmony _harmony = new("CVRParamLib.BepInEx-patch");
 
@@ -106,16 +106,16 @@ public class BepInExMod : BaseUnityPlugin
                 case CVRParameterInstance.LogLevel.Debug:
                     if(!CVRParamLib.Config.LoadedConfig.ShowDebug)
                         break;
-                    Logger.LogDebug($"[CVRParamLib] {o}");
+                    Logger.LogDebug(o);
                     break;
                 case CVRParameterInstance.LogLevel.Log:
-                    Logger.LogInfo($"[CVRParamLib] {o}");
+                    Logger.LogInfo(o);
                     break;
                 case CVRParameterInstance.LogLevel.Warning:
-                    Logger.LogWarning($"[CVRParamLib] {o}");
+                    Logger.LogWarning(o);
                     break;
                 case CVRParameterInstance.LogLevel.Error:
-                    Logger.LogError($"[CVRParamLib] {o}");
+                    Logger.LogError(o);
                     break;
             }
         });
@@ -130,15 +130,12 @@ public class BepInExMod : BaseUnityPlugin
         });
     }
     
-    private void Update()
+    private void Update() => ReplicatedModInfo._instance?.Update();
+
+    private void OnGUI()
     {
-        Dictionary<string, float> p = new(ParameterManager.Parameters);
-        foreach (string parametersKey in p.Keys)
-        {
-            float paramValue = ParameterManager.GetParameterValue(parametersKey, p) ?? default;
-            ReplicatedModInfo._instance?.UpdateParameter(parametersKey, paramValue);
-        }
-        ReplicatedModInfo._instance?.Update();
+        if(CVRParamLib.Config.LoadedConfig.ShowDebug)
+            GUIDebug.OnGUI();
     }
 
     private void OnApplicationQuit()
@@ -153,7 +150,7 @@ public class BepInExMod : BaseUnityPlugin
     }
 }
 
-public class HarmonyPatches
+internal class HarmonyPatches
 {
     public static bool MelonLoaderHarmonyBug;
     

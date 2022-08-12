@@ -59,6 +59,10 @@ public class Config
     [TomlPrecedingComment("Whether or not to cache all avatars that are loaded. Recommended false as to only cache avatars the LocalPlayer has used.")]
     public bool CacheAllLoadedAvatars { get; set; } = false;
 
+    [TomlProperty("AddAllAnimatorParameters")]
+    [TomlPrecedingComment("Will ignore whether or not the AnimatorControllerParameter will replicate or not")]
+    public bool AddAllAnimatorParameters { get; set; } = false;
+
     public static void Init(string location, Action OnFinish = null)
     {
         // Create the config

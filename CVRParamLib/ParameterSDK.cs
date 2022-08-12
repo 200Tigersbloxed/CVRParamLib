@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using ABI.CCK.Components;
 
 namespace CVRParamLib;
 
@@ -7,7 +9,8 @@ public static class ParameterSDK
     /// <summary>
     /// Invoked whenever the LocalPLayer changes their avatar
     /// </summary>
-    public static Action<string> OnLocalAvatarChanged = avatarId => { };
+    public static Action<CVRAvatar, AvatarInfo, List<FullAvatarParameter>> OnLocalAvatarChanged =
+        (cvrAvatar, avatarInfo, avatarParameters) => { };
 
     /// <summary>
     /// Adds, or updates, Parameter with value to cache to be updated on the main Avatar
@@ -37,4 +40,9 @@ public static class ParameterSDK
     /// </summary>
     /// <param name="name">The name of the Parameter</param>
     public static void RemoveCachedAvatarParameter(string name) => ParameterManager.DeleteParameter(name);
+
+    /// <summary>
+    /// Gets a List of the Current Avatar's Parameters
+    /// </summary>
+    public static List<FullAvatarParameter> GetAvatarParameters => new(ParameterManager.CurrentAvatarParameters);
 }
