@@ -39,3 +39,4 @@ using MelonLoader;
 [assembly: MelonInfo(typeof(MelonLoaderMod), "CVRParamLib", "1.3.0", "200Tigersbloxed")]
 [assembly: MelonGame("Alpha Blend Interactive", "ChilloutVR")]
 [assembly: MelonOptionalDependencies("BepInEx")]
+[assembly: HarmonyDontPatchAll] // Tell MelonLoader to not call PatchAll() automatically
