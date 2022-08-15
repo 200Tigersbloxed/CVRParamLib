@@ -36,7 +36,7 @@ public class ParameterManager
             Parameters.Remove(name);
     }
 
-    public static float? GetParameterValue(string name, Dictionary<string, float>? parameters = null)
+    internal static float? GetParameterValue(string name, Dictionary<string, float>? parameters = null)
     {
         if (parameters == null)
             parameters = new(Parameters);

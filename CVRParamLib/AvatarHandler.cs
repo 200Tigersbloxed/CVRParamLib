@@ -50,7 +50,7 @@ public static class AvatarHandler
         }
     }
     
-    public static void CacheAvatar(AvatarDetails_t avatar)
+    internal static void CacheAvatar(AvatarDetails_t avatar)
     {
         if (!IsAvatarCached(avatar))
         {

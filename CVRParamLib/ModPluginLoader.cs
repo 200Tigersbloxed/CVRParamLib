@@ -2,9 +2,11 @@
 
 using System;
 using System.IO;
+using ABI_RC.Core;
 using ABI_RC.Core.Networking.IO.UserGeneratedContent;
 using ABI_RC.Core.Player;
 using ABI_RC.Core.Savior;
+using ABI_RC.Systems.MovementSystem;
 using MelonLoader;
 using BepInEx;
 using HarmonyLib;
@@ -25,7 +27,6 @@ internal class MelonLoaderMod : MelonMod
     
     public override void OnApplicationStart()
     {
-        HarmonyPatches.MelonLoaderHarmonyBug = true;
         InitHarmony();
         CVRParameterInstance.PrepareLog((level, o) =>
         {
@@ -78,8 +79,6 @@ internal class MelonLoaderMod : MelonMod
         base.OnApplicationQuit();
     }
     
-    // bug? Why does MelonLoader's Harmony Invoke twice, but BepInEx's only once?
-
     private void InitHarmony()
     {
         _harmony.PatchAll();
@@ -152,59 +151,36 @@ internal class BepInExMod : BaseUnityPlugin
 
 internal class HarmonyPatches
 {
-    public static bool MelonLoaderHarmonyBug;
-    
     [HarmonyPatch(typeof(PlayerSetup), "Start")]
     class PlayerSetupStartHook
     {
-        static bool didStart;
-        
         [HarmonyPostfix]
         static void Start(PlayerSetup __instance)
         {
-            if (MelonLoaderHarmonyBug)
-            {
-                if (!didStart)
-                {
-                    didStart = true;
-                    if (ReplicatedModInfo._instance == null)
-                        ReplicatedModInfo._instance = new CVRParameterInstance(__instance);
-                    else
-                        ReplicatedModInfo._instance.UpdatePlayerSetup(__instance);
-                }
-                else
-                    didStart = false;
-            }
-            else
-            {
-                if (ReplicatedModInfo._instance == null)
-                    ReplicatedModInfo._instance = new CVRParameterInstance(__instance);
-                else
-                    ReplicatedModInfo._instance.UpdatePlayerSetup(__instance);
-            }
+            if (ReplicatedModInfo._instance == null)
+                ReplicatedModInfo._instance = new CVRParameterInstance(__instance);
+            ReplicatedModInfo._instance.UpdatePlayerSetup(__instance);
         }
     }
 
-    [HarmonyPatch(typeof(PlayerSetup), "SetupAvatar")]
+    /*
+    [HarmonyPatch(typeof(PlayerSetup), "PreSetupAvatarGeneral")]
     class ContentHook
     {
-        static bool didLoad;
-        
         [HarmonyPostfix]
-        static void SetupAvatar(GameObject inAvatar)
+        static void PreSetupAvatarGeneral()
         {
-            if (MelonLoaderHarmonyBug)
-            {
-                if (!didLoad)
-                {
-                    didLoad = true;
-                    ReplicatedModInfo._instance?.HarmonyAvatarChange(MetaPort.Instance.currentAvatarGuid);
-                }
-                else
-                    didLoad = false;
-            }
-            else
-                ReplicatedModInfo._instance?.HarmonyAvatarChange(MetaPort.Instance.currentAvatarGuid);
+            ReplicatedModInfo._instance?.HarmonyAvatarChange(ReplicatedModInfo._instance.PlayerSetup._avatar, MetaPort.Instance.currentAvatarGuid);
+        }
+    }*/
+
+    [HarmonyPatch(typeof(MovementSystem), "UpdateAnimatorManager")]
+    class MovementSystemHook
+    {
+        [HarmonyPostfix]
+        static void UpdateAnimatorManager(CVRAnimatorManager manager)
+        {
+            ReplicatedModInfo._instance?.HarmonyAvatarChange(manager);
         }
     }
 
