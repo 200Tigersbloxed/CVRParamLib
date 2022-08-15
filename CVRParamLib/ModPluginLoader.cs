@@ -2,9 +2,11 @@
 
 using System;
 using System.IO;
+using ABI_RC.Core;
 using ABI_RC.Core.Networking.IO.UserGeneratedContent;
 using ABI_RC.Core.Player;
 using ABI_RC.Core.Savior;
+using ABI_RC.Systems.MovementSystem;
 using MelonLoader;
 using BepInEx;
 using HarmonyLib;
@@ -161,13 +163,24 @@ internal class HarmonyPatches
         }
     }
 
-    [HarmonyPatch(typeof(PlayerSetup), "SetupAvatar")]
+    /*
+    [HarmonyPatch(typeof(PlayerSetup), "PreSetupAvatarGeneral")]
     class ContentHook
     {
         [HarmonyPostfix]
-        static void SetupAvatar(GameObject inAvatar)
+        static void PreSetupAvatarGeneral()
         {
-            ReplicatedModInfo._instance?.HarmonyAvatarChange(MetaPort.Instance.currentAvatarGuid);
+            ReplicatedModInfo._instance?.HarmonyAvatarChange(ReplicatedModInfo._instance.PlayerSetup._avatar, MetaPort.Instance.currentAvatarGuid);
+        }
+    }*/
+
+    [HarmonyPatch(typeof(MovementSystem), "UpdateAnimatorManager")]
+    class MovementSystemHook
+    {
+        [HarmonyPostfix]
+        static void UpdateAnimatorManager(CVRAnimatorManager manager)
+        {
+            ReplicatedModInfo._instance?.HarmonyAvatarChange(manager);
         }
     }
 

@@ -25,6 +25,7 @@ public class CVRParameterInstance
     public string UserId => MetaPort.Instance.ownerId;
     private GameObject? _avatarGO;
     public CVRAvatar? avatar { get; private set; }
+    private CVRAnimatorManager? _animatorManager;
 
     public CVRParameterInstance(PlayerSetup _playerSetup)
     {
@@ -33,20 +34,26 @@ public class CVRParameterInstance
         WriteLog(LogLevel.Log, "CVRParameterInstance Created!");
     }
 
+    private int OnWaitForAvatarParametersDone = 0;
+
     internal void Update()
     {
-        Dictionary<string, float> p = new(ParameterManager.Parameters);
-        foreach (string parametersKey in p.Keys)
+        foreach (FullAvatarParameter fullAvatarParameter in new List<FullAvatarParameter>(ParameterManager.CurrentAvatarParameters))
         {
-            float paramValue = ParameterManager.GetParameterValue(parametersKey, p) ?? default;
-            ReplicatedModInfo._instance?.UpdateParameter(parametersKey, paramValue);
+            if (ParameterManager.Parameters.ContainsKey(fullAvatarParameter.Name))
+            {
+                float value = ParameterManager.Parameters[fullAvatarParameter.Name];
+                if (Math.Abs(fullAvatarParameter.Value - value) > 0.01f)
+                {
+                    UpdateParameter(fullAvatarParameter.Name, value);
+                }
+            }
         }
         AvatarHandler.Update();
-        if (PlayerSetup._avatar != null && _avatarGO != PlayerSetup._avatar)
+        if (OnWaitForAvatarParametersDone == 2)
         {
-            _avatarGO = PlayerSetup._avatar;
-            avatar = _avatarGO.GetComponent<CVRAvatar>();
-            ParameterManager.OnLocalAvatarChange(PlayerSetup.animatorManager);
+            OnWaitForAvatarParametersDone = 0;
+            ParameterManager.OnLocalAvatarChange(_animatorManager!);
             ParameterWriter.OnLocalAvatarChange();
         }
         ParameterManager.Update();
@@ -55,11 +62,33 @@ public class CVRParameterInstance
     internal static void PrepareLog(Action<LogLevel, object> _log) => Log = _log;
     internal static void PrepareCoroutine(Action<IEnumerator> _coroutine) => Coroutine = _coroutine;
 
-    internal void HarmonyAvatarChange(string avatarId)
+    internal void HarmonyAvatarChange(CVRAnimatorManager animatorManager)
     {
-        avatar = null;
+        string avatarId = MetaPort.Instance.currentAvatarGuid;
+        _avatarGO = PlayerSetup._avatar;
+        avatar = _avatarGO.GetComponent<CVRAvatar>();
         AvatarHandler.OnLocalAvatarChanged(avatarId);
         CacheAvatarToAvatarList(avatarId);
+        _animatorManager = animatorManager;
+        CreateCoroutine(waitForAvatarParameters());
+    }
+
+    private IEnumerator waitForAvatarParameters()
+    {
+        OnWaitForAvatarParametersDone = 1;
+        while (_animatorManager == null)
+        {
+            yield return new WaitForSeconds(0.01f);
+        }
+        while (_animatorManager.animator == null)
+        {
+            yield return new WaitForSeconds(0.01f);
+        }
+        while (_animatorManager.animator.parameters == null)
+        {
+            yield return new WaitForSeconds(0.01f);
+        }
+        OnWaitForAvatarParametersDone = 2;
     }
 
     private IEnumerator cacheEnum(string avatarId)
