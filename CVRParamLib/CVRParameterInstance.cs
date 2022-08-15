@@ -150,6 +150,8 @@ public class CVRParameterInstance
 
     internal void UpdateParameter(string name, float value) => PlayerSetup.changeAnimatorParam(name, value);
 
+    internal CVRAnimatorManager? GetAnimatorManager() => _animatorManager;
+
     public enum LogLevel
     {
         Debug,
