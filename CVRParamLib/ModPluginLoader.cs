@@ -1,11 +1,11 @@
-﻿#nullable enable
+#nullable enable
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using ABI_RC.Core;
 using ABI_RC.Core.Networking.IO.UserGeneratedContent;
 using ABI_RC.Core.Player;
-using ABI_RC.Core.Savior;
 using ABI_RC.Systems.MovementSystem;
 using MelonLoader;
 using BepInEx;
@@ -189,5 +189,49 @@ internal class HarmonyPatches
     {
         [HarmonyPrefix]
         static void Recycle(AvatarDetails_t __instance) => AvatarHandler.CacheAvatar(__instance);
+    }
+    
+    [HarmonyPatch]
+    class AnimatorParameters_Hooks {
+
+        private static Dictionary<string, float> _paramCache = new();
+
+        static void OnParameterChanged(string name, float value) {
+            if (_paramCache.ContainsKey(name)) {
+                if (Mathf.Approximately(_paramCache[name], value)) return;
+                _paramCache[name] = value;
+            }
+            else {
+                _paramCache.Add(name, value);
+            }
+
+            CVRParameterInstance.WriteLog(CVRParameterInstance.LogLevel.Debug,
+                $"Parameter {name} changed to {value}.");
+            // Todo: Use this to drive parameter changes instead of checking in update loop
+            // Note1: Parameters driven by the CVR Stream component will spam the hell out of this method.
+            // Note2: When a slider is being used, will also spam as well.
+            // So a check with a dictionary far values change is advised, also for comparision of floats I would
+            // recommend using this: https://docs.unity3d.com/ScriptReference/Mathf.Approximately.html
+            // Did a small implementation above
+        }
+        
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(CVRAnimatorManager), nameof(CVRAnimatorManager.SetAnimatorParameterFloat))]
+        static void AfterSetAnimatorParameterFloat(string name, float value, CVRAnimatorManager __instance) {
+            if (ReplicatedModInfo._instance?.GetAnimatorManager() != __instance) return;
+            OnParameterChanged(name, value);
+        }
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(CVRAnimatorManager), nameof(CVRAnimatorManager.SetAnimatorParameterInt))]
+        static void AfterSetAnimatorParameterInt(string name, int value, CVRAnimatorManager __instance) {
+            if (ReplicatedModInfo._instance?.GetAnimatorManager() != __instance) return;
+            OnParameterChanged(name, value);
+        }
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(CVRAnimatorManager), nameof(CVRAnimatorManager.SetAnimatorParameterBool))]
+        static void AfterSetAnimatorParameterBool(string name, bool value, CVRAnimatorManager __instance) {
+            if (ReplicatedModInfo._instance?.GetAnimatorManager() != __instance) return;
+            OnParameterChanged(name, value ? 1f : 0f);
+        }
     }
 }
