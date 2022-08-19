@@ -3,14 +3,13 @@
 using System;
 using System.IO;
 using ABI_RC.Core;
+using ABI_RC.Core.InteractionSystem;
 using ABI_RC.Core.Networking.IO.UserGeneratedContent;
 using ABI_RC.Core.Player;
-using ABI_RC.Core.Savior;
 using ABI_RC.Systems.MovementSystem;
 using MelonLoader;
 using BepInEx;
 using HarmonyLib;
-using UnityEngine;
 
 namespace CVRParamLib;
 
@@ -163,17 +162,6 @@ internal class HarmonyPatches
         }
     }
 
-    /*
-    [HarmonyPatch(typeof(PlayerSetup), "PreSetupAvatarGeneral")]
-    class ContentHook
-    {
-        [HarmonyPostfix]
-        static void PreSetupAvatarGeneral()
-        {
-            ReplicatedModInfo._instance?.HarmonyAvatarChange(ReplicatedModInfo._instance.PlayerSetup._avatar, MetaPort.Instance.currentAvatarGuid);
-        }
-    }*/
-
     [HarmonyPatch(typeof(MovementSystem), "UpdateAnimatorManager")]
     class MovementSystemHook
     {
@@ -189,5 +177,19 @@ internal class HarmonyPatches
     {
         [HarmonyPrefix]
         static void Recycle(AvatarDetails_t __instance) => AvatarHandler.CacheAvatar(__instance);
+    }
+
+    [HarmonyPatch(typeof(ViewManager), "RegisterEvents")]
+    class ViewManagerHook
+    {
+        [HarmonyPrefix]
+        static void RegisterEvents() => ViewManager.Instance.gameMenuView.View.BindCall("CVRAppCallChangeAnimatorParam", new Action<string, float>(
+            (paramName, paramValue) =>
+            {
+                // Keep in mind that because this call is already Bound, the game's actual BindCall will not function,
+                // so we must replicate it's function to do the same thing.
+                ReplicatedModInfo._instance?.UpdateParameter(paramName, paramValue);
+                ParameterManager.DeleteParameter(paramName);
+            }));
     }
 }
