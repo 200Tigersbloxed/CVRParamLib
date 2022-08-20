@@ -68,8 +68,10 @@ public class ParameterManager
                 DoesAnimatorControllerParameterReplicate(animatorControllerParameter.name) &&
                 animatorControllerParameter.type != AnimatorControllerParameterType.Trigger)
             {
+                FullAvatarParameter currentAvatarParam = new(animatorManager, animatorControllerParameter);
                 previousAvatarParameters.Add(new (animatorManager, animatorControllerParameter));
-                CurrentAvatarParameters.Add(new (animatorManager, animatorControllerParameter));
+                CurrentAvatarParameters.Add(currentAvatarParam);
+                OSCMessageHandler.HandleParameterUpdate(currentAvatarParam);
             }
         }
     }

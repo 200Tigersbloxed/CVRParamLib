@@ -192,4 +192,22 @@ internal class HarmonyPatches
                 ParameterManager.DeleteParameter(paramName);
             }));
     }
+
+    [HarmonyPatch(typeof(CVR_MenuManager), "HandleSystemCall")]
+    class CVR_MenuManagerHook
+    {
+        [HarmonyPrefix]
+        static void HandleSystemCall(string type, string param1, string param2, string param3, string param4)
+        {
+            switch (type)
+            {
+                case "AppChangeAnimatorParam":
+                    ParameterManager.DeleteParameter(param1);
+                    break;
+                case "ChangeAnimatorParam":
+                    ParameterManager.DeleteParameter(param1);
+                    break;
+            }
+        }
+    }
 }
